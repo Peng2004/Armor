@@ -151,11 +151,10 @@ void Armor::Draw()
     Mat dst;
     img.copyTo(dst);
     vector<Point> contours = Filtration();
-    if (contours.empty())
+    if (contours.empty() == 0)
     {
-        cout << "omg";
+        rect2d = minAreaRect(contours);
     }
-    rect2d = minAreaRect(contours);
     Point2f points[4];
     rect2d.points(points);
     line(dst, points[0], points[1], Scalar(255, 255, 255), 2, 8, 0);
@@ -168,14 +167,21 @@ void Armor::Draw()
     imshow("test", dst);
 }
 
+string ToString(double val)
+{
+    stringstream ss;
+    ss<<setiosflags(ios::fixed)<<setprecision(2)<<val;
+    string str=ss.str();
+    return str;
+}
 void Armor::Draw2()
 {
     Mat dst(Size(400, 400), CV_8UC3, Scalar(0));
     Solvepnp();
     namedWindow("math", WINDOW_AUTOSIZE);
-    putText(dst, "distance:" + to_string(distance) + "cm", Point(10, 100), 2, 1, Scalar(255, 255, 255));
-    putText(dst, "x_angle:" + to_string(x_angle), Point(10, 200), 2, 1, Scalar(255, 255, 255));
-    putText(dst, "y_angle:" + to_string(y_angle), Point(10, 300), 2, 1, Scalar(255, 255, 255));
-    putText(dst, "z_angle:" + to_string(z_angle), Point(10, 400), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "distance:" + ToString(this->distance) + "cm", Point(10, 50), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "x_angle:" + ToString(this->x_angle)+"degree", Point(10, 150), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "y_angle:" +ToString(this->y_angle)+"degree", Point(10, 250), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "z_angle:" + ToString(this->z_angle)+"degree", Point(10, 350), 2, 1, Scalar(255, 255, 255));
     imshow("math", dst);
 }

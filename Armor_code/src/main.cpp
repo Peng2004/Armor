@@ -8,7 +8,7 @@ using namespace cv;
 int main()
 {
     VideoCapture vid("/home/peng-ub/Armor/Armor.avi");
-    if (vid.isOpened()==0)
+    if (vid.isOpened() == 0)
     {
         cout << "Failed to open video" << endl;
         return 0;
@@ -19,8 +19,8 @@ int main()
         vid >> img;
         if (img.empty())
         {
-            break;
             destroyAllWindows;
+            break;
         }
         Armor test(img);
         imshow("video", img);

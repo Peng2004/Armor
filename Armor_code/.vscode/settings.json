@@ -8,6 +8,8 @@
         "initializer_list": "cpp",
         "utility": "cpp",
         "deque": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp"
     }
 }
