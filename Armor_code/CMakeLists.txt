@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.10)
+project(Armor)
+add_executable(mainexe src/main.cpp src/Armor.cpp src/Kalman.cpp src/Solvepnp.cpp)
+find_package(OpenCV REQUIRED)
+target_include_directories(mainexe PUBLIC ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(mainexe ${OpenCV_LIBS})
+include_directories(${CMAKE_SOURCE_DIR}/include)
