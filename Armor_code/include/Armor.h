@@ -6,18 +6,17 @@
 
 using namespace std;
 using namespace cv;
-
 class Armor
 {
 private:
     Mat img;
-    RotatedRect rect2d;
+    vector<Point2f> point2d;
 
 public:
-    Armor(Mat _img) { img = _img; }
+    Armor(Mat img) { this->img = img; }
     Mat getimg() { return img; }
     Mat Pretreatment();
-    vector<Point> Filtration();
+    vector<vector<Point>> Filtration();
     void kalman_init();                            // 卡尔曼滤波初始化函数
     Point2f kalman_predict(Point2f target_centre); // 卡尔曼预测函数
     void Draw();

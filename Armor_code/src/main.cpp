@@ -26,7 +26,8 @@ int main()
         imshow("video", img);
         test.Draw();
         test.Draw2();
-        waitKey(1000 / vid.get(CAP_PROP_FPS));
+        //waitKey(3000 / vid.get(CAP_PROP_FPS));
+        waitKey(100);
     }
     waitKey();
     return 0;

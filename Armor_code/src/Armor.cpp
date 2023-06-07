@@ -12,158 +12,89 @@ Mat Armor::Pretreatment()
     return hsv;
 }
 
-vector<Point> Armor::Filtration()
+vector<vector<Point>> Armor::Filtration()
 {
     Mat gray;
     gray = Pretreatment();
     vector<vector<Point>> contours;
-    vector<Point> contours_final;
+    vector<vector<Point>> contours_final;
     vector<Vec4i> hierachy;
     vector<int> erase_temp;
     findContours(gray, contours, hierachy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     for (size_t i = 0; i < contours.size(); i++)
     {
         double area = contourArea(contours[i]);
-        if (area > 200)
+        if (area > 100)
         {
-            for (size_t j = 0; j < contours[i].size(); j++)
-            {
-                contours_final.push_back(contours[i][j]);
-            }
+            contours_final.push_back(contours[i]);
+
         }
     }
+    if(contours_final.size()!=2)
+    {
+        RotatedRect rect_test;
+        contours=contours_final;
+        contours_final.clear();
+        for(size_t i=0;i<contours.size();i++)
+        {
+            int ratio=0;
+            rect_test=minAreaRect(contours[i]);
+            if(rect_test.size.width>rect_test.size.height)
+            {
+                ratio=rect_test.size.width/rect_test.size.height;
+            }
+            else 
+            {
+                ratio=rect_test.size.height/rect_test.size.width;
+            }
+            if(ratio>=3&&ratio<=15)
+            {
+                contours_final.push_back(contours[i]);
+            }
+        }
 
-    // cout << contours.size() << endl;
-    //  bool judge = true;
-    //  contours_temp = contours;
-    //  for (int i = 0; i < contours.size(); i++)//长宽比筛选
-    //  {
-    //          RotatedRect minArea = minAreaRect(contours[i]);
-    //          float height = minArea.size.height;
-    //          float width = minArea.size.width;
-    //          if (height < width)
-    //          {
-    //                  swap(height, width);
-    //          }
-    //          float rate = height / width;
-    //          //cout << "过滤算法r" <<rate<< endl;
-    //          if (rate < 3.3 || rate > 5)
-    //          {
-    //                  //contours.erase(contours.begin() + (erase_temp[i] - i));
-    //                  erase_temp.push_back(i);
-    //          }
-    //  }
-
-    // int num = erase_temp.size();
-    // for (int i = 0; i < num; i++)
-    // {
-    //         contours.erase(contours.begin() + (erase_temp[i] - i));
-    // }
-    // if (contours.size() < 2)//轮廓集为空则判定筛除失败
-    // {
-    //         //cout << "长宽比筛选失败" << endl;
-    //         return contours_temp;
-    // }
-    // contours_temp = contours;
-    // erase_temp.clear();
-    // for (int i = 0; i < contours.size(); i++)//轮廓和轮廓最小矩形的面积比
-    // {
-    //         RotatedRect minArea = minAreaRect(contours[i]);
-    //         float area = contourArea(contours[i]);
-    //         float rate = minArea.size.area() / area;
-    //         if (rate < 1 || rate > 1.65)
-    //         {
-    //                 erase_temp.push_back(i);
-    //         }
-    // }
-    // num = erase_temp.size();
-    // for (int i = 0; i < num; i++)
-    // {
-    //         contours.erase(contours.begin() + (erase_temp[i] - i));
-    // }
-    // if (contours.size() < 2)
-    // {
-    //         //cout << "面积比筛选失败" << endl;
-    //         return contours_temp;
-    // }
-    // contours_temp = contours;
-    // erase_temp.clear();
-    // for (int i = 0; i < contours.size(); i++)//凸度筛选
-    // {
-    //         vector<vector<Point>>HullPoint(contours.size());
-    //         float area = contourArea(contours[i]);
-    //         convexHull(Mat(contours[i]), HullPoint[i], false);
-    //         float solidity = contourArea(HullPoint[i]) / area;
-    //         if (solidity < 0.5)
-    //         {
-    //                 erase_temp.push_back(i);
-    //         }
-    // }
-    // num = erase_temp.size();
-    // for (int i = 0; i < num; i++)
-    // {
-    //         contours.erase(contours.begin() + (erase_temp[i] - i));
-    // }
-    // if (contours.size() < 2)
-    // {
-    //         //cout << "凸度筛选失败" << endl;
-    //         return contours_temp;
-    // }
-    // erase_temp.clear();
-    // contours_temp = contours;
-    // for (int i = 0; i < contours.size(); i++)//高度差筛选
-    // {
-    //         int erase = 1;
-    //         RotatedRect minArea1 = minAreaRect(contours[i]);
-    //         for (int j = 0; j < contours.size(); j++)//两两对比高度差
-    //         {
-    //                 if (i == j)
-    //                 {
-    //                         continue;
-    //                 }
-    //                 RotatedRect minArea2 = minAreaRect(contours[j]);
-    //                 float minus = abs(minArea1.center.y - minArea2.center.y);//计算两个轮廓之间的高度差
-    //                 if (minus < 32)
-    //                 {
-    //                         erase = 0;
-    //                 }
-    //         }
-    //         if (erase == 1)
-    //         {
-    //                 erase_temp.push_back(i);
-    //         }
-    // }
-    // num = erase_temp.size();
-    // for (int i = 0; i < num; i++)
-    // {
-    //         contours.erase(contours.begin() + (erase_temp[i] - i));
-    // }
-    // if (contours.size() < 2)
-    // {
-    //         //cout << "高度差筛选失败" << endl;
-    //         return contours_temp;
-    // }
+    }
+    assert(contours_final.size()==2);
     return contours_final;
+    
+
 }
 
 void Armor::Draw()
 {
     Mat dst;
     img.copyTo(dst);
-    vector<Point> contours = Filtration();
+    vector<vector<Point>> contours = Filtration();
     if (contours.empty() == 0)
     {
-        rect2d = minAreaRect(contours);
+        RotatedRect rect;
+        for(size_t i=0;i<contours.size();i++)
+        {
+            Point2f point[4];
+            Point2f t,b;
+            rect = minAreaRect(contours[i]);
+            rect.points(point);
+            sort(point, point + 4, [](const Point2f &p1, const Point2f &p2)
+            { return p1.y < p2.y; });
+            t.x=(point[0].x+point[1].x)/2;
+            t.y=(point[0].y+point[1].y)/2;
+            b.x=(point[2].x+point[3].x)/2;
+            b.y=(point[2].y+point[3].y)/2;
+            point2d.push_back(t);
+            point2d.push_back(b);
+        }
+
     }
-    Point2f points[4];
-    rect2d.points(points);
-    line(dst, points[0], points[1], Scalar(255, 255, 255), 2, 8, 0);
-    line(dst, points[2], points[1], Scalar(255, 255, 255), 2, 8, 0);
-    line(dst, points[2], points[3], Scalar(255, 255, 255), 2, 8, 0);
-    line(dst, points[0], points[3], Scalar(255, 255, 255), 2, 8, 0);
-    line(dst, points[0], points[2], Scalar(255, 255, 255), 2, 8, 0);
-    line(dst, points[1], points[3], Scalar(255, 255, 255), 2, 8, 0);
-    circle(dst, rect2d.center, 5, Scalar(0, 0, 255), -1);
+    //计算中心点坐标
+    double k1 = (double)(point2d[3].y - point2d[0].y) / (double)(point2d[3].x - point2d[0].x);
+    double b1 = point2d[0].y - k1 * point2d[0].x;
+    double k2 = (double)(point2d[1].y - point2d[2].y) / (double)(point2d[1].x - point2d[2].x);
+    double b2 = point2d[2].y - k2 * point2d[2].x;
+    double x = (b2 - b1) / (k1 - k2);
+    double y = k1 * x + b1;
+    line(dst, point2d[0], point2d[3], Scalar(255, 255, 255), 2, 8, 0);
+    line(dst, point2d[2], point2d[1], Scalar(255, 255, 255), 2, 8, 0);
+    circle(dst, Point(x,y), 5, Scalar(0, 0, 255), -1);
     imshow("test", dst);
 }
 
