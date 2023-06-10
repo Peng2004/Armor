@@ -13,21 +13,24 @@ int main()
         cout << "Failed to open video" << endl;
         return 0;
     }
-    Mat img;
+kalman_init();
     while (1)
     {
+        Mat img;
         vid >> img;
         if (img.empty())
         {
             destroyAllWindows;
             break;
         }
-        Armor test(img);
+        Armor test;
+        test.img=img;
         imshow("video", img);
         test.Draw();
         test.Draw2();
-        //waitKey(3000 / vid.get(CAP_PROP_FPS));
-        waitKey(100);
+        imshow("test", img);
+        waitKey(1000 / vid.get(CAP_PROP_FPS));
+        // waitKey(100);
     }
     waitKey();
     return 0;

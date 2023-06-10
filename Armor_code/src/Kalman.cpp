@@ -12,12 +12,7 @@ int t_count = 0;					//计数
 Point2f llastp, lastp, nowp;				//储存当前帧、上一帧、上上一帧的点信息
 Mat measurement = Mat::zeros(measureNum, 1, CV_32F);
 
-
-	// *函数名：卡尔曼滤波初始化  kalman_init
-	// *函数功能描述：（非虚函数，子类可以直接继承使用）对卡尔曼滤波需要的几个参数进行初始化
-
-
-void Armor:: kalman_init() {
+void kalman_init() {
 	KF.transitionMatrix = (Mat_<float>(stateNum, measureNum) <<
 		1, 0, T, 0, 1 / 2 * T * T, 0,
 		0, 1, 0, T, 0, 1 / 2 * T * T,
@@ -32,11 +27,6 @@ void Armor:: kalman_init() {
 	setIdentity(KF.errorCovPost, Scalar::all(1));                       //设置后验错误估计协方差矩阵P
 
 }
-
-
-	// *函数功能描述：对当前位置点进行下一帧的预测，返回预测的坐标点
-	// * 函数参数：Point2f 类型点，为当前装甲板所在的位置的中心点
-	// * 函数返回值：基于传入的中心点的预测点
 
 
 Point2f Armor:: kalman_predict(Point2f target_centre) {
@@ -54,7 +44,75 @@ Point2f Armor:: kalman_predict(Point2f target_centre) {
 	KF.correct(measurement);			                        //根据测量值修正协方差矩阵
 	return predict_point;				                        //返回预测的点
 }
+// int main()
+// {
+//     // 初始化Kalman滤波器
+//     KalmanFilter KF(9, 3, 0);
+//     KF.transitionMatrix = (Mat_<float>(9, 9) <<
+//         1, 0, 0, 1, 0, 0, 0.5, 0, 0,
+//         0, 1, 0, 0, 1, 0, 0, 0.5, 0,
+//         0, 0, 1, 0, 0, 1, 0, 0, 0.5,
+//         0, 0, 0, 1, 0, 0, 1, 0, 0,
+//         0, 0, 0, 0, 1, 0, 0, 1, 0,
+//         0, 0, 0, 0, 0, 1, 0, 0, 1,
+//         0, 0, 0, 0, 0, 0, 1, 0, 0,
+//         0, 0, 0, 0, 0, 0, 0, 1, 0,
+//         0, 0, 0, 0, 0, 0, 0, 0, 1);
+//     setIdentity(KF.measurementMatrix);
+//     setIdentity(KF.processNoiseCov, Scalar::all(1e-5));
+//     setIdentity(KF.measurementNoiseCov, Scalar::all(1e-1));
+//     setIdentity(KF.errorCovPost, Scalar::all(1));
+//     Mat state(9, 1, CV_32F);
 
-/*************************************卡尔曼滤波模块结束*******************************************/
+//     // 初始化3D点
+//     std::vector<Point3f> points3d = {
+//         Point3f(-0.5f, 0.5f, 0),
+//         Point3f(0.5f, 0.5f, 0),
+//         Point3f(0.5f, -0.5f, 0),
+//         Point3f(-0.5f, -0.5f, 0)
+//     };
+
+//     // 读入2D点
+//     std::vector<Point2f> points2d;
+//     Mat img = imread("img.jpg");
+//     points2d.push_back(Point2f(100, 100));
+//     points2d.push_back(Point2f(200, 100));
+//     points2d.push_back(Point2f(200, 200));
+//     points2d.push_back(Point2f(100, 200));
+
+//     // 循环处理每个3D点
+//     for (auto &p : points3d)
+//     {
+//         // 初始化Kalman滤波器状态
+//         state.at<float>(0) = p.x;
+//         state.at<float>(1) = p.y;
+//         state.at<float>(2) = p.z;
+//         state.at<float>(3) = 0;
+//         state.at<float>(4) = 0;
+//         state.at<float>(5) = 0;
+//         state.at<float>(6) = 0;
+//         state.at<float>(7) = 0;
+//         state.at<float>(8) = 0;
+//         KF.statePost = state;
+
+//         // 循环处理每个时刻
+//         for (int i = 0; i < 10; i++)
+//         {
+//             // 预测Kalman滤波器状态
+//             Mat prediction = KF.predict();
+
+//             // 更新Kalman滤波器状态
+//             Mat measurement = (Mat_<float>(3, 1) << points2d[i].x, points2d[i].y, 1);
+//             Mat estimated = KF.correct(measurement);
+
+//             // 获取平滑后的3D点坐标
+//             p.x = estimated.at<float>(0);
+//             p.y = estimated.at<float>(1);
+//             p.z = estimated.at<float>(2);
+//         }
+//     }
+
+//     return 0;
+// }
 
 

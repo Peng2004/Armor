@@ -8,7 +8,8 @@ Mat Armor::Pretreatment()
     inRange(hsv, Scalar(11, 43, 46), Scalar(34, 255, 255), hsv);
     Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
     erode(hsv, hsv, element, Point(-1, -1), 1);
-    dilate(hsv, hsv, element, Point(-1, -1), 1);
+    //dilate(hsv, hsv, element, Point(-1, -1), 1);
+    imshow("tes",hsv);
     return hsv;
 }
 
@@ -24,7 +25,7 @@ vector<vector<Point>> Armor::Filtration()
     for (size_t i = 0; i < contours.size(); i++)
     {
         double area = contourArea(contours[i]);
-        if (area > 100)
+        if (area > 400)
         {
             contours_final.push_back(contours[i]);
 
@@ -47,14 +48,14 @@ vector<vector<Point>> Armor::Filtration()
             {
                 ratio=rect_test.size.height/rect_test.size.width;
             }
-            if(ratio>=3&&ratio<=15)
+            if(ratio>=3&&ratio<=20)
             {
                 contours_final.push_back(contours[i]);
             }
         }
 
     }
-    assert(contours_final.size()==2);
+    //assert(contours_final.size()==2);
     return contours_final;
     
 
@@ -62,10 +63,10 @@ vector<vector<Point>> Armor::Filtration()
 
 void Armor::Draw()
 {
-    Mat dst;
-    img.copyTo(dst);
+    // Mat dst;
+    // img.copyTo(dst);
     vector<vector<Point>> contours = Filtration();
-    if (contours.empty() == 0)
+    if (contours.size()==2)
     {
         RotatedRect rect;
         for(size_t i=0;i<contours.size();i++)
@@ -92,10 +93,10 @@ void Armor::Draw()
     double b2 = point2d[2].y - k2 * point2d[2].x;
     double x = (b2 - b1) / (k1 - k2);
     double y = k1 * x + b1;
-    line(dst, point2d[0], point2d[3], Scalar(255, 255, 255), 2, 8, 0);
-    line(dst, point2d[2], point2d[1], Scalar(255, 255, 255), 2, 8, 0);
-    circle(dst, Point(x,y), 5, Scalar(0, 0, 255), -1);
-    imshow("test", dst);
+    line(img, point2d[0], point2d[3], Scalar(255, 255, 255), 2, 8, 0);
+    line(img, point2d[2], point2d[1], Scalar(255, 255, 255), 2, 8, 0);
+    circle(img, Point(x,y), 5, Scalar(0, 0, 255), -1);
+    center=Point(x,y);
 }
 
 string ToString(double val)
@@ -107,12 +108,12 @@ string ToString(double val)
 }
 void Armor::Draw2()
 {
-    Mat dst(Size(400, 400), CV_8UC3, Scalar(0));
+    Mat dst(Size(400, 600), CV_8UC3, Scalar(0));
     Solvepnp();
     namedWindow("math", WINDOW_AUTOSIZE);
     putText(dst, "distance:" + ToString(this->distance) + "cm", Point(10, 50), 2, 1, Scalar(255, 255, 255));
-    putText(dst, "x_angle:" + ToString(this->x_angle)+"degree", Point(10, 150), 2, 1, Scalar(255, 255, 255));
-    putText(dst, "y_angle:" +ToString(this->y_angle)+"degree", Point(10, 250), 2, 1, Scalar(255, 255, 255));
-    putText(dst, "z_angle:" + ToString(this->z_angle)+"degree", Point(10, 350), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "x_angle:" + ToString(this->x_angle)+"degree", Point(10, 350), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "y_angle:" +ToString(this->y_angle)+"degree", Point(10, 450), 2, 1, Scalar(255, 255, 255));
+    putText(dst, "z_angle:" + ToString(this->z_angle)+"degree", Point(10, 550), 2, 1, Scalar(255, 255, 255));
     imshow("math", dst);
 }
