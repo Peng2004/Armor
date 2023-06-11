@@ -10,6 +10,7 @@
         "deque": "cpp",
         "string": "cpp",
         "cmath": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "iostream": "cpp"
     }
 }
